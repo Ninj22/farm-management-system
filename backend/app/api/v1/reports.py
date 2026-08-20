@@ -45,3 +45,13 @@ def export_expenses_csv(db: Session = Depends(get_db)):
 @router.get("/stock-transactions.csv", dependencies=[Depends(get_current_user)])
 def export_stock_transactions_csv(db: Session = Depends(get_db)):
     return _stream(report_service.stock_transactions_csv(db), "stock_transactions_report.csv")
+
+
+@router.get("/summary.pdf", dependencies=[Depends(get_current_user)])
+def export_summary_pdf(db: Session = Depends(get_db)):
+    buffer = report_service.farm_summary_pdf(db)
+    return StreamingResponse(
+        iter([buffer.getvalue()]),
+        media_type="application/pdf",
+        headers={"Content-Disposition": 'attachment; filename="farm_summary_report.pdf"'},
+    )

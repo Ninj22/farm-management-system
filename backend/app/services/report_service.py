@@ -93,3 +93,87 @@ def stock_transactions_csv(db: Session) -> io.StringIO:
         "Notes": t.notes or "",
     } for t in txns]
     return _csv_response(rows)
+
+
+def farm_summary_pdf(db: Session) -> io.BytesIO:
+    """One-page farm overview: livestock, inventory, financials, alerts.
+    Kept in this file alongside the CSV builders so all report logic lives in one place."""
+    from datetime import date
+    from decimal import Decimal
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import cm
+    from reportlab.lib import colors
+    from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet
+
+    from app.models.livestock import LivestockStatus
+    from app.models.inventory import InventoryItem
+    from app.models.expense import Expense
+    from app.models.sale import Sale
+    from sqlalchemy import func
+
+    buffer = io.BytesIO()
+    doc = SimpleDocTemplate(buffer, pagesize=A4, topMargin=2 * cm, bottomMargin=2 * cm)
+    styles = getSampleStyleSheet()
+    elements = []
+
+    elements.append(Paragraph("Farm Management System — Summary Report", styles["Title"]))
+    elements.append(Paragraph(f"Generated: {date.today().isoformat()}", styles["Normal"]))
+    elements.append(Spacer(1, 0.6 * cm))
+
+    total_livestock = db.query(Livestock).filter(Livestock.status == LivestockStatus.ACTIVE).count()
+    low_stock = db.query(InventoryItem).filter(
+        InventoryItem.is_archived.is_(False),
+        InventoryItem.quantity_on_hand <= InventoryItem.reorder_level,
+    ).count()
+    inventory_value = db.query(func.sum(InventoryItem.quantity_on_hand * InventoryItem.purchase_price)).filter(
+        InventoryItem.is_archived.is_(False)
+    ).scalar() or Decimal("0")
+    total_revenue = db.query(func.sum(Sale.total_amount)).scalar() or Decimal("0")
+    total_expenses = db.query(func.sum(Expense.amount)).scalar() or Decimal("0")
+
+    summary_data = [
+        ["Metric", "Value"],
+        ["Total active livestock", str(total_livestock)],
+        ["Low stock items", str(low_stock)],
+        ["Inventory value (KES)", f"{inventory_value:,.2f}"],
+        ["Total revenue (KES)", f"{total_revenue:,.2f}"],
+        ["Total expenses (KES)", f"{total_expenses:,.2f}"],
+        ["Net result (KES)", f"{(total_revenue - total_expenses):,.2f}"],
+    ]
+    summary_table = Table(summary_data, colWidths=[9 * cm, 6 * cm])
+    summary_table.setStyle(TableStyle([
+        ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#166534")),
+        ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+        ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+        ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#d1d5db")),
+        ("FONTSIZE", (0, 0), (-1, -1), 10),
+        ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9fafb")]),
+        ("TOPPADDING", (0, 0), (-1, -1), 6),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+    ]))
+    elements.append(summary_table)
+    elements.append(Spacer(1, 0.8 * cm))
+
+    elements.append(Paragraph("Expenses by category", styles["Heading2"]))
+    expense_rows = db.query(Expense.category, func.sum(Expense.amount).label("total")).group_by(Expense.category).all()
+    if expense_rows:
+        exp_data = [["Category", "Total (KES)"]] + [[r.category.value, f"{r.total:,.2f}"] for r in expense_rows]
+        exp_table = Table(exp_data, colWidths=[9 * cm, 6 * cm])
+        exp_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#166534")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold"),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.HexColor("#d1d5db")),
+            ("FONTSIZE", (0, 0), (-1, -1), 10),
+            ("ROWBACKGROUNDS", (0, 1), (-1, -1), [colors.white, colors.HexColor("#f9fafb")]),
+            ("TOPPADDING", (0, 0), (-1, -1), 6),
+            ("BOTTOMPADDING", (0, 0), (-1, -1), 6),
+        ]))
+        elements.append(exp_table)
+    else:
+        elements.append(Paragraph("No expenses recorded yet.", styles["Normal"]))
+
+    doc.build(elements)
+    buffer.seek(0)
+    return buffer
