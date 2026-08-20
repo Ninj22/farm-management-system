@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
 from app.models.purchase import Purchase, PurchaseItem
-from app.models.inventory import MovementType
+from app.models.inventory import StockTransactionType
 from app.repositories import purchase_repository
 from app.schemas.purchase import PurchaseCreate
-from app.schemas.inventory import StockAdjustment
+from app.schemas.inventory import StockTransactionCreate
 from app.services import inventory_service
 
 
@@ -26,17 +26,18 @@ def create_purchase(db: Session, payload: PurchaseCreate, created_by) -> Purchas
 
     purchase = purchase_repository.create_purchase(db, purchase, items)
 
-    # This is the "purchase increases inventory" rule from the spec —
-    # every item on the purchase becomes a PURCHASE_IN stock movement.
+    # Purchase increases stock — positive quantity on the ledger.
     for i in payload.items:
-        inventory_service.adjust_stock(
+        inventory_service.record_transaction(
             db,
             item_id=i.item_id,
-            adjustment=StockAdjustment(
+            payload=StockTransactionCreate(
                 quantity=i.quantity,
-                movement_type=MovementType.PURCHASE_IN,
-                reference=f"purchase:{purchase.id}",
+                transaction_type=StockTransactionType.PURCHASE,
+                reference_type="purchase",
+                reference_id=purchase.id,
             ),
+            user_id=created_by,
         )
 
     return purchase

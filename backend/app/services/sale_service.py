@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
 
 from app.models.sale import Sale, SaleItem, SaleItemType
-from app.models.inventory import MovementType
+from app.models.inventory import StockTransactionType
 from app.repositories import sale_repository
 from app.schemas.sale import SaleCreate
-from app.schemas.inventory import StockAdjustment
+from app.schemas.inventory import StockTransactionCreate
 from app.services import inventory_service, livestock_service
 
 
@@ -32,19 +32,20 @@ def create_sale(db: Session, payload: SaleCreate, created_by) -> Sale:
 
     sale = sale_repository.create_sale(db, sale, items)
 
-    # This is the "sale updates livestock or inventory" rule from the spec.
     for i in payload.items:
         if i.item_type == SaleItemType.LIVESTOCK and i.livestock_id:
             livestock_service.mark_sold(db, i.livestock_id)
         elif i.item_type == SaleItemType.PRODUCT and i.inventory_item_id:
-            inventory_service.adjust_stock(
+            inventory_service.record_transaction(
                 db,
                 item_id=i.inventory_item_id,
-                adjustment=StockAdjustment(
-                    quantity=i.quantity,
-                    movement_type=MovementType.SALE_OUT,
-                    reference=f"sale:{sale.id}",
+                payload=StockTransactionCreate(
+                    quantity=-i.quantity,
+                    transaction_type=StockTransactionType.SALE,
+                    reference_type="sale",
+                    reference_id=sale.id,
                 ),
+                user_id=created_by,
             )
 
     return sale

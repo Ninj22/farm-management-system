@@ -5,6 +5,7 @@ from app.core.config import settings
 from app.api.v1 import (
     auth, inventory, suppliers, purchases, livestock, veterinary, customers, sales, expenses,
 )
+from backend.app.api.v1 import farms, stores
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
@@ -25,6 +26,10 @@ app.include_router(veterinary.router, prefix="/api/v1/veterinary", tags=["veteri
 app.include_router(customers.router, prefix="/api/v1/customers", tags=["customers"])
 app.include_router(sales.router, prefix="/api/v1/sales", tags=["sales"])
 app.include_router(expenses.router, prefix="/api/v1/expenses", tags=["expenses"])
+app.include_router(farms.router, prefix="/api/v1/farms", tags=["farms"])
+app.include_router(stores.router, prefix="/api/v1/stores", tags=["stores"])
+
+
 
 
 @app.get("/health")
