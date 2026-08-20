@@ -6,6 +6,11 @@ import Layout from "./components/Layout";
 import Login from "./pages/Login";
 import Dashboard from "./pages/Dashboard";
 import Inventory from "./pages/Inventory";
+import LivestockPage from "./pages/Livestock";
+import Veterinary from "./pages/Veterinary";
+import Purchases from "./pages/Purchases";
+import Sales from "./pages/Sales";
+import Expenses from "./pages/Expenses";
 
 const queryClient = new QueryClient();
 
@@ -20,7 +25,11 @@ export default function App() {
               <Route element={<Layout />}>
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/inventory" element={<Inventory />} />
-                {/* add /livestock, /veterinary, /purchases, /sales, /expenses pages here, same pattern as Inventory.tsx */}
+                <Route path="/livestock" element={<LivestockPage />} />
+                <Route path="/veterinary" element={<Veterinary />} />
+                <Route path="/purchases" element={<Purchases />} />
+                <Route path="/sales" element={<Sales />} />
+                <Route path="/expenses" element={<Expenses />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
