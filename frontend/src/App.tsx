@@ -11,6 +11,7 @@ import Veterinary from "./pages/Veterinary";
 import Purchases from "./pages/Purchases";
 import Sales from "./pages/Sales";
 import Expenses from "./pages/Expenses";
+import EquipmentPage from "./pages/Equipment";
 
 const queryClient = new QueryClient();
 
@@ -30,6 +31,7 @@ export default function App() {
                 <Route path="/purchases" element={<Purchases />} />
                 <Route path="/sales" element={<Sales />} />
                 <Route path="/expenses" element={<Expenses />} />
+                <Route path="/equipment" element={<EquipmentPage />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

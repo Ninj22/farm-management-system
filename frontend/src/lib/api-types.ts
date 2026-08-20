@@ -404,6 +404,76 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/equipment": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Equipment */
+        get: operations["list_equipment_api_v1_equipment_get"];
+        put?: never;
+        /** Create Equipment */
+        post: operations["create_equipment_api_v1_equipment_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/equipment/upcoming-service": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Upcoming Service */
+        get: operations["upcoming_service_api_v1_equipment_upcoming_service_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/equipment/{equipment_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Equipment */
+        patch: operations["update_equipment_api_v1_equipment__equipment_id__patch"];
+        trace?: never;
+    };
+    "/api/v1/equipment/{equipment_id}/maintenance": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Maintenance History */
+        get: operations["maintenance_history_api_v1_equipment__equipment_id__maintenance_get"];
+        put?: never;
+        /** Record Maintenance */
+        post: operations["record_maintenance_api_v1_equipment__equipment_id__maintenance_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -489,6 +559,64 @@ export interface components {
             upcoming_treatments_count: number;
             /** Inventory Value */
             inventory_value: string;
+        };
+        /** EquipmentCreate */
+        EquipmentCreate: {
+            /** Name */
+            name: string;
+            /** Category */
+            category?: string | null;
+            /** Serial Number */
+            serial_number?: string | null;
+            /** Purchase Date */
+            purchase_date?: string | null;
+            /** Purchase Price */
+            purchase_price?: number | string | null;
+            /** Condition */
+            condition?: string | null;
+            /** Location */
+            location?: string | null;
+        };
+        /** EquipmentOut */
+        EquipmentOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /** Name */
+            name: string;
+            /** Category */
+            category: string | null;
+            /** Serial Number */
+            serial_number: string | null;
+            /** Purchase Date */
+            purchase_date: string | null;
+            /** Purchase Price */
+            purchase_price: string | null;
+            /** Condition */
+            condition: string | null;
+            /** Location */
+            location: string | null;
+            status: components["schemas"]["EquipmentStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * EquipmentStatus
+         * @enum {string}
+         */
+        EquipmentStatus: "OPERATIONAL" | "UNDER_MAINTENANCE" | "OUT_OF_SERVICE" | "DISPOSED";
+        /** EquipmentUpdate */
+        EquipmentUpdate: {
+            /** Condition */
+            condition?: string | null;
+            /** Location */
+            location?: string | null;
+            status?: components["schemas"]["EquipmentStatus"] | null;
         };
         /**
          * ExpenseCategory
@@ -733,6 +861,48 @@ export interface components {
             /** Location */
             location?: string | null;
             status?: components["schemas"]["LivestockStatus"] | null;
+        };
+        /** MaintenanceRecordCreate */
+        MaintenanceRecordCreate: {
+            /**
+             * Maintenance Date
+             * Format: date
+             */
+            maintenance_date: string;
+            /** Service Type */
+            service_type?: string | null;
+            /** Description */
+            description?: string | null;
+            /** Cost */
+            cost?: number | string | null;
+            /** Next Service Date */
+            next_service_date?: string | null;
+        };
+        /** MaintenanceRecordOut */
+        MaintenanceRecordOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Equipment Id
+             * Format: uuid
+             */
+            equipment_id: string;
+            /**
+             * Maintenance Date
+             * Format: date
+             */
+            maintenance_date: string;
+            /** Service Type */
+            service_type: string | null;
+            /** Description */
+            description: string | null;
+            /** Cost */
+            cost: string | null;
+            /** Next Service Date */
+            next_service_date: string | null;
         };
         /**
          * PaymentStatus
@@ -2103,6 +2273,193 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DashboardSummary"];
+                };
+            };
+        };
+    };
+    list_equipment_api_v1_equipment_get: {
+        parameters: {
+            query?: {
+                search?: string | null;
+                skip?: number;
+                limit?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EquipmentOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_equipment_api_v1_equipment_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EquipmentCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EquipmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    upcoming_service_api_v1_equipment_upcoming_service_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenanceRecordOut"][];
+                };
+            };
+        };
+    };
+    update_equipment_api_v1_equipment__equipment_id__patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                equipment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["EquipmentUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EquipmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    maintenance_history_api_v1_equipment__equipment_id__maintenance_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                equipment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MaintenanceRecordOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_maintenance_api_v1_equipment__equipment_id__maintenance_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                equipment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MaintenanceRecordCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["EquipmentOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
                 };
             };
         };
