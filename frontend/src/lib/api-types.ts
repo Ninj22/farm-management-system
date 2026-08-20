@@ -387,6 +387,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/dashboard/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Summary */
+        get: operations["get_summary_api_v1_dashboard_summary_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -461,6 +478,17 @@ export interface components {
              * Format: date-time
              */
             created_at: string;
+        };
+        /** DashboardSummary */
+        DashboardSummary: {
+            /** Total Livestock */
+            total_livestock: number;
+            /** Low Stock Count */
+            low_stock_count: number;
+            /** Upcoming Treatments Count */
+            upcoming_treatments_count: number;
+            /** Inventory Value */
+            inventory_value: string;
         };
         /**
          * ExpenseCategory
@@ -2055,6 +2083,26 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ExpenseSummary"][];
+                };
+            };
+        };
+    };
+    get_summary_api_v1_dashboard_summary_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DashboardSummary"];
                 };
             };
         };

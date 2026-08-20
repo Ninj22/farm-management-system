@@ -43,3 +43,10 @@ def low_stock_items(db: Session):
         InventoryItem.is_archived.is_(False),
         InventoryItem.quantity_on_hand <= InventoryItem.reorder_level,
     ).all()
+
+def total_inventory_value(db: Session):
+    from sqlalchemy import func
+    result = db.query(func.sum(InventoryItem.quantity_on_hand * InventoryItem.purchase_price)).filter(
+        InventoryItem.is_archived.is_(False)
+    ).scalar()
+    return result or 0

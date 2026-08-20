@@ -29,3 +29,8 @@ def save(db: Session, animal: Livestock) -> Livestock:
     db.commit()
     db.refresh(animal)
     return animal
+
+
+def count_active(db: Session) -> int:
+    from app.models.livestock import LivestockStatus
+    return db.query(Livestock).filter(Livestock.status == LivestockStatus.ACTIVE).count()

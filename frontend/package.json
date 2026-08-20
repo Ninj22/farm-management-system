@@ -14,6 +14,7 @@
     "@hookform/resolvers": "^5.9.1",
     "@tanstack/react-query": "^5.101.4",
     "axios": "^1.19.0",
+    "lucide-react": "^1.33.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-hook-form": "^7.85.0",
@@ -35,7 +36,7 @@
     "openapi-typescript": "^7.13.0",
     "postcss": "^8.5.26",
     "tailwindcss": "^4.3.3",
-    "typescript": "~6.0.2",
+    "typescript": "^5.9.3",
     "typescript-eslint": "^8.65.0",
     "vite": "^8.2.0"
   },
@@ -45,7 +46,3 @@
   "author": "",
   "license": "ISC"
 }
-
-
-
-
