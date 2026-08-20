@@ -2,7 +2,9 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
-from app.api.v1 import auth
+from app.api.v1 import (
+    auth, inventory, suppliers, purchases, livestock, veterinary, customers, sales, expenses,
+)
 
 app = FastAPI(title=settings.PROJECT_NAME)
 
@@ -15,6 +17,14 @@ app.add_middleware(
 )
 
 app.include_router(auth.router, prefix="/api/v1/auth", tags=["auth"])
+app.include_router(inventory.router, prefix="/api/v1/inventory", tags=["inventory"])
+app.include_router(suppliers.router, prefix="/api/v1/suppliers", tags=["suppliers"])
+app.include_router(purchases.router, prefix="/api/v1/purchases", tags=["purchases"])
+app.include_router(livestock.router, prefix="/api/v1/livestock", tags=["livestock"])
+app.include_router(veterinary.router, prefix="/api/v1/veterinary", tags=["veterinary"])
+app.include_router(customers.router, prefix="/api/v1/customers", tags=["customers"])
+app.include_router(sales.router, prefix="/api/v1/sales", tags=["sales"])
+app.include_router(expenses.router, prefix="/api/v1/expenses", tags=["expenses"])
 
 
 @app.get("/health")
