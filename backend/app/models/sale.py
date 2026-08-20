@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Column, String, Numeric, Date, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -30,7 +30,7 @@ class Sale(Base):
     payment_method = Column(String, nullable=True)
     total_amount = Column(Numeric(12, 2), nullable=False, default=0)
     created_by = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     items = relationship("SaleItem", back_populates="sale")
 

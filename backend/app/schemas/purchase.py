@@ -26,9 +26,7 @@ class PurchaseItemOut(BaseModel):
     item_id: uuid.UUID
     quantity: Decimal
     unit_price: Decimal
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class PurchaseOut(BaseModel):
@@ -40,6 +38,4 @@ class PurchaseOut(BaseModel):
     total_amount: Decimal
     created_at: datetime
     items: list[PurchaseItemOut]
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

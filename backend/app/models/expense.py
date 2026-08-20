@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Column, String, Numeric, Date, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -31,4 +31,4 @@ class Expense(Base):
     expense_date = Column(Date, nullable=False)
     supplier_id = Column(UUID(as_uuid=True), ForeignKey("suppliers.id"), nullable=True)
     description = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

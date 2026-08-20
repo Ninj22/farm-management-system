@@ -42,9 +42,7 @@ class InventoryItemOut(BaseModel):
     selling_price: Optional[Decimal]
     expiry_date: Optional[date]
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class StockTransactionCreate(BaseModel):

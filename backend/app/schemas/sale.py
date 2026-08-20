@@ -30,9 +30,7 @@ class SaleItemOut(BaseModel):
     inventory_item_id: Optional[uuid.UUID]
     quantity: Decimal
     unit_price: Decimal
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class SaleOut(BaseModel):
@@ -43,6 +41,4 @@ class SaleOut(BaseModel):
     total_amount: Decimal
     created_at: datetime
     items: list[SaleItemOut]
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

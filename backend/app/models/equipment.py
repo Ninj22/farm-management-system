@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Column, String, Numeric, Date, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -29,7 +29,7 @@ class Equipment(Base):
     location = Column(String, nullable=True)
     assigned_user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     status = Column(Enum(EquipmentStatus), nullable=False, default=EquipmentStatus.OPERATIONAL)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     maintenance_records = relationship("MaintenanceRecord", back_populates="equipment")
 
@@ -44,6 +44,6 @@ class MaintenanceRecord(Base):
     description = Column(String, nullable=True)
     cost = Column(Numeric(12, 2), nullable=True)
     next_service_date = Column(Date, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     equipment = relationship("Equipment", back_populates="maintenance_records")

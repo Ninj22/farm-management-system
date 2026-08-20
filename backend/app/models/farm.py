@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, String, Numeric, DateTime, Enum
 from sqlalchemy.dialects.postgresql import UUID
@@ -23,4 +23,4 @@ class Farm(Base):
     location = Column(String, nullable=True)
     size = Column(Numeric(12, 2), nullable=True)
     status = Column(Enum(FarmStatus), nullable=False, default=FarmStatus.ACTIVE)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

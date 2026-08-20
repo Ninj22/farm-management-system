@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Column, String, Numeric, Date, DateTime, Enum, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
@@ -39,7 +39,7 @@ class InventoryItem(Base):
     batch_number = Column(String, nullable=True)
     expiry_date = Column(Date, nullable=True)
     is_archived = Column(Boolean, default=False)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     transactions = relationship("StockTransaction", back_populates="item")
 
@@ -67,6 +67,6 @@ class StockTransaction(Base):
     reference_id = Column(UUID(as_uuid=True), nullable=True)   # id of the purchase/treatment/sale row
     user_id = Column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     notes = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     item = relationship("InventoryItem", back_populates="transactions")

@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, String, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -14,4 +14,4 @@ class Store(Base):
     farm_id = Column(UUID(as_uuid=True), ForeignKey("farms.id"), nullable=False)
     name = Column(String, nullable=False)
     location = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

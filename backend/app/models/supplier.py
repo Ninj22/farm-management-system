@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import Column, String, DateTime
 from sqlalchemy.dialects.postgresql import UUID
@@ -15,4 +15,4 @@ class Supplier(Base):
     contact_phone = Column(String, nullable=True)
     contact_email = Column(String, nullable=True)
     address = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

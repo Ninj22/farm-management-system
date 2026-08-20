@@ -33,6 +33,4 @@ class TreatmentOut(BaseModel):
     veterinarian: Optional[str]
     cost: Optional[Decimal]
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

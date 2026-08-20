@@ -35,9 +35,7 @@ class EquipmentOut(BaseModel):
     location: Optional[str]
     status: EquipmentStatus
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class MaintenanceRecordCreate(BaseModel):
@@ -56,6 +54,4 @@ class MaintenanceRecordOut(BaseModel):
     description: Optional[str]
     cost: Optional[Decimal]
     next_service_date: Optional[date]
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}

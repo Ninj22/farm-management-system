@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Column, String, Numeric, Date, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -30,4 +30,4 @@ class Treatment(Base):
     veterinarian = Column(String, nullable=True)
     cost = Column(Numeric(12, 2), nullable=True)
     notes = Column(String, nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

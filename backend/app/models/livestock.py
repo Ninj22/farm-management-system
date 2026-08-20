@@ -1,6 +1,6 @@
 import enum
 import uuid
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 from sqlalchemy import Column, String, Date, DateTime, Enum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -35,4 +35,4 @@ class Livestock(Base):
     location = Column(String, nullable=True)
     dam_id = Column(UUID(as_uuid=True), ForeignKey("livestock.id"), nullable=True)
     sire_id = Column(UUID(as_uuid=True), ForeignKey("livestock.id"), nullable=True)
-    created_at = Column(DateTime, default=datetime.utcnow)
+    created_at = Column(DateTime, default=lambda: datetime.now(timezone.utc))

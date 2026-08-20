@@ -24,8 +24,6 @@ class FarmOut(BaseModel):
     size: Optional[Decimal]
     status: FarmStatus
     created_at: datetime
-
-    class Config:
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
