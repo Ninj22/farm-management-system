@@ -2,23 +2,20 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
 
 from app.db.session import get_db
-from app.core.deps import get_current_user, require_roles
-from app.models.user import UserRole
+from app.core.deps import get_current_user, require_permission
+
 from app.models.expense import Expense
 from app.schemas.expense import ExpenseCreate, ExpenseOut, ExpenseSummary
 from app.repositories import expense_repository
 
 router = APIRouter()
-WRITE_ROLES = [UserRole.ADMIN, UserRole.FARM_MANAGER]
-
-
 @router.get("", response_model=list[ExpenseOut], dependencies=[Depends(get_current_user)])
 def list_expenses(skip: int = 0, limit: int = Query(20, le=100), db: Session = Depends(get_db)):
     items, _ = expense_repository.list_expenses(db, skip, limit)
     return items
 
 
-@router.post("", response_model=ExpenseOut, dependencies=[Depends(require_roles(WRITE_ROLES))])
+@router.post("", response_model=ExpenseOut, dependencies=[Depends(require_permission("expenses.create"))])
 def create_expense(payload: ExpenseCreate, db: Session = Depends(get_db)):
     expense = Expense(**payload.model_dump())
     return expense_repository.create_expense(db, expense)

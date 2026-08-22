@@ -38,3 +38,15 @@ def require_roles(allowed_roles: List[UserRole]):
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Not enough permissions")
         return current_user
     return role_checker
+
+def require_permission(permission: str):
+    from app.core.permissions import has_permission
+
+    def checker(current_user: User = Depends(get_current_user)) -> User:
+        if not has_permission(current_user.role, permission):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Missing permission: {permission}",
+            )
+        return current_user
+    return checker
