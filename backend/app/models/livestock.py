@@ -24,6 +24,7 @@ class Livestock(Base):
     __tablename__ = "livestock"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    farm_id = Column(UUID(as_uuid=True), ForeignKey("farms.id"), nullable=False)
     tag_number = Column(String, unique=True, nullable=False, index=True)
     species = Column(String, nullable=False, default="Cattle")
     breed = Column(String, nullable=True)

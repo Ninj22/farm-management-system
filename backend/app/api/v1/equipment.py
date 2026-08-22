@@ -25,7 +25,7 @@ def upcoming_service(db: Session = Depends(get_db)):
 
 @router.post("", response_model=EquipmentOut, dependencies=[Depends(require_permission("equipment.create"))])
 def create_equipment(payload: EquipmentCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
-    return equipment_service.create_equipment(db, payload, current_user.id)
+    return equipment_service.create_equipment(db, payload, current_user)
 
 
 @router.patch("/{equipment_id}", response_model=EquipmentOut, dependencies=[Depends(require_permission("equipment.update"))])

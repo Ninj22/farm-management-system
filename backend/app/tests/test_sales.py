@@ -1,5 +1,6 @@
-def test_livestock_sale_updates_status(client, auth_headers):
+def test_livestock_sale_updates_status(client, auth_headers, farm_and_store):
     livestock_resp = client.post("/api/v1/livestock", json={
+        "farm_id": farm_and_store["farm_id"],
         "tag_number": "COW-002",
         "species": "Cattle",
         "sex": "MALE",

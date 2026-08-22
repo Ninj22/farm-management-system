@@ -7,7 +7,9 @@ from app.repositories import livestock_repository
 from app.schemas.livestock import LivestockCreate, LivestockUpdate
 
 
-def create_livestock(db: Session, payload: LivestockCreate) -> Livestock:
+def create_livestock(db: Session, payload: LivestockCreate, current_user) -> Livestock:
+    from app.core.scoping import assert_farm_access
+    assert_farm_access(db, current_user, payload.farm_id)
     animal = Livestock(**payload.model_dump())
     return livestock_repository.create_livestock(db, animal)
 

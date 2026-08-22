@@ -4,6 +4,7 @@ from sqlalchemy.orm import Session
 
 from app.db.session import get_db
 from app.core.deps import get_current_user, require_permission
+from app.models.user import User
 
 from app.schemas.livestock import LivestockCreate, LivestockUpdate, LivestockOut
 from app.services import livestock_service
@@ -17,8 +18,8 @@ def list_livestock(search: str | None = None, status: str | None = None, skip: i
 
 
 @router.post("", response_model=LivestockOut, dependencies=[Depends(require_permission("livestock.create"))])
-def create_livestock(payload: LivestockCreate, db: Session = Depends(get_db)):
-    return livestock_service.create_livestock(db, payload)
+def create_livestock(payload: LivestockCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    return livestock_service.create_livestock(db, payload, current_user)
 
 
 @router.patch("/{livestock_id}", response_model=LivestockOut, dependencies=[Depends(require_permission("livestock.update"))])

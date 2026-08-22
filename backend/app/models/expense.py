@@ -26,6 +26,7 @@ class Expense(Base):
     __tablename__ = "expenses"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    farm_id = Column(UUID(as_uuid=True), ForeignKey("farms.id"), nullable=False)
     category = Column(Enum(ExpenseCategory), nullable=False)
     amount = Column(Numeric(12, 2), nullable=False)
     expense_date = Column(Date, nullable=False)

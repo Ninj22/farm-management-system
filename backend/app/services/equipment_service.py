@@ -8,7 +8,10 @@ from app.schemas.equipment import EquipmentCreate, EquipmentUpdate, MaintenanceR
 from app.core.audit import log_action
 
 
-def create_equipment(db: Session, payload: EquipmentCreate, user_id: uuid.UUID) -> Equipment:
+def create_equipment(db: Session, payload: EquipmentCreate, current_user) -> Equipment:
+    from app.core.scoping import assert_farm_access
+    assert_farm_access(db, current_user, payload.farm_id)
+    user_id = current_user.id
     equipment = Equipment(**payload.model_dump())
     equipment = equipment_repository.create_equipment(db, equipment)
     log_action(db, user_id, "CREATE", "Equipment", equipment.id)

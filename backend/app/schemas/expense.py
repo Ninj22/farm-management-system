@@ -9,6 +9,7 @@ from app.models.expense import ExpenseCategory
 
 
 class ExpenseCreate(BaseModel):
+    farm_id: uuid.UUID
     category: ExpenseCategory
     amount: Decimal
     expense_date: date
@@ -17,6 +18,7 @@ class ExpenseCreate(BaseModel):
 
 
 class ExpenseOut(BaseModel):
+    farm_id: uuid.UUID
     id: uuid.UUID
     category: ExpenseCategory
     amount: Decimal

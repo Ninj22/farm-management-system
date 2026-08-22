@@ -20,6 +20,7 @@ class Equipment(Base):
     __tablename__ = "equipment"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
+    farm_id = Column(UUID(as_uuid=True), ForeignKey("farms.id"), nullable=False)
     name = Column(String, nullable=False)
     category = Column(String, nullable=True)          # e.g. "Tractor", "Sprayer", "Milking equipment"
     serial_number = Column(String, nullable=True)

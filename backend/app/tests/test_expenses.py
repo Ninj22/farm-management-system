@@ -1,5 +1,6 @@
-def test_create_expense_and_summary(client, auth_headers):
+def test_create_expense_and_summary(client, auth_headers, farm_and_store):
     resp = client.post("/api/v1/expenses", json={
+        "farm_id": farm_and_store["farm_id"],
         "category": "FEED",
         "amount": "5000",
         "expense_date": "2026-08-20",

@@ -11,6 +11,7 @@ def test_treatment_decreases_medicine_stock(client, auth_headers, farm_and_store
     medicine_id = medicine_resp.json()["id"]
 
     livestock_resp = client.post("/api/v1/livestock", json={
+        "farm_id": farm_and_store["farm_id"],
         "tag_number": "COW-001",
         "species": "Cattle",
         "sex": "FEMALE",

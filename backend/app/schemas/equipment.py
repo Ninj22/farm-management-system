@@ -9,6 +9,7 @@ from app.models.equipment import EquipmentStatus
 
 
 class EquipmentCreate(BaseModel):
+    farm_id: uuid.UUID
     name: str
     category: Optional[str] = None
     serial_number: Optional[str] = None
@@ -25,6 +26,7 @@ class EquipmentUpdate(BaseModel):
 
 
 class EquipmentOut(BaseModel):
+    farm_id: uuid.UUID
     id: uuid.UUID
     name: str
     category: Optional[str]

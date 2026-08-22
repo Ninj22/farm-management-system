@@ -8,6 +8,7 @@ from app.models.livestock import Sex, LivestockStatus
 
 
 class LivestockCreate(BaseModel):
+    farm_id: uuid.UUID
     tag_number: str
     species: str = "Cattle"
     breed: Optional[str] = None
@@ -27,6 +28,7 @@ class LivestockUpdate(BaseModel):
 
 
 class LivestockOut(BaseModel):
+    farm_id: uuid.UUID
     id: uuid.UUID
     tag_number: str
     species: str

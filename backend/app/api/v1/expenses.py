@@ -16,7 +16,9 @@ def list_expenses(skip: int = 0, limit: int = Query(20, le=100), db: Session = D
 
 
 @router.post("", response_model=ExpenseOut, dependencies=[Depends(require_permission("expenses.create"))])
-def create_expense(payload: ExpenseCreate, db: Session = Depends(get_db)):
+def create_expense(payload: ExpenseCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+    from app.core.scoping import assert_farm_access
+    assert_farm_access(db, current_user, payload.farm_id)
     expense = Expense(**payload.model_dump())
     return expense_repository.create_expense(db, expense)
 
