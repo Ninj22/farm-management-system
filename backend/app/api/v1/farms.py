@@ -23,7 +23,7 @@ def create_farm(payload: FarmCreate, db: Session = Depends(get_db)):
 
 
 @router.post("/access", dependencies=[Depends(require_roles([UserRole.ADMIN]))])
-def grant_farm_access(payload: dict, db: Session = Depends(get_db)):
+def grant_farm_access(payload: dict, db: Session = Depends(get_db), current_user=Depends(get_current_user)):
     from app.models.user_farm_access import UserFarmAccess
     from app.schemas.farm_access import GrantFarmAccess
     data = GrantFarmAccess(**payload)
@@ -35,4 +35,10 @@ def grant_farm_access(payload: dict, db: Session = Depends(get_db)):
     access = UserFarmAccess(user_id=data.user_id, farm_id=data.farm_id)
     db.add(access)
     db.commit()
+
+    from app.core.audit import log_action
+    log_action(
+        db, current_user.id, "GRANT_FARM_ACCESS", "UserFarmAccess", access.id,
+        changes={"granted_to_user_id": str(data.user_id), "farm_id": str(data.farm_id)},
+    )
     return {"detail": "Access granted"}

@@ -29,10 +29,16 @@ def update_item(db: Session, item_id: uuid.UUID, payload: InventoryItemUpdate, u
     item = inventory_repository.get_item(db, item_id)
     if not item:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Item not found")
-    for field, value in payload.model_dump(exclude_unset=True).items():
+
+    updates = payload.model_dump(exclude_unset=True)
+    before = {field: str(getattr(item, field)) for field in updates}
+    for field, value in updates.items():
         setattr(item, field, value)
     item = inventory_repository.save(db, item)
-    log_action(db, user_id, "UPDATE", "InventoryItem", item.id)
+    after = {field: str(getattr(item, field)) for field in updates}
+
+    if before != after:
+        log_action(db, user_id, "UPDATE", "InventoryItem", item.id, changes={"before": before, "after": after})
     return item
 
 
@@ -45,6 +51,7 @@ def record_transaction(db: Session, item_id: uuid.UUID, payload: StockTransactio
     if new_balance < 0:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Insufficient stock for this transaction")
 
+    balance_before = item.quantity_on_hand
     item.quantity_on_hand = new_balance
     inventory_repository.save(db, item)
 
@@ -54,5 +61,13 @@ def record_transaction(db: Session, item_id: uuid.UUID, payload: StockTransactio
         user_id=user_id, notes=payload.notes,
     )
     inventory_repository.add_transaction(db, txn)
-    log_action(db, user_id, "ADJUST_STOCK", "InventoryItem", item.id, changes={"quantity": str(payload.quantity), "type": payload.transaction_type.value})
+    log_action(
+        db, user_id, "ADJUST_STOCK", "InventoryItem", item.id,
+        changes={
+            "type": payload.transaction_type.value,
+            "quantity_change": str(payload.quantity),
+            "before": {"quantity_on_hand": str(balance_before)},
+            "after": {"quantity_on_hand": str(new_balance)},
+        },
+    )
     return item

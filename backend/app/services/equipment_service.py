@@ -22,10 +22,16 @@ def update_equipment(db: Session, equipment_id: uuid.UUID, payload: EquipmentUpd
     equipment = equipment_repository.get_equipment(db, equipment_id)
     if not equipment:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Equipment not found")
-    for field, value in payload.model_dump(exclude_unset=True).items():
+
+    updates = payload.model_dump(exclude_unset=True)
+    before = {field: str(getattr(equipment, field)) for field in updates}
+    for field, value in updates.items():
         setattr(equipment, field, value)
     equipment = equipment_repository.save(db, equipment)
-    log_action(db, user_id, "UPDATE", "Equipment", equipment.id)
+    after = {field: str(getattr(equipment, field)) for field in updates}
+
+    if before != after:
+        log_action(db, user_id, "UPDATE", "Equipment", equipment.id, changes={"before": before, "after": after})
     return equipment
 
 
