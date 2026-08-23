@@ -1,7 +1,44 @@
 @import "tailwindcss";
 
+@theme {
+  --color-plum-900: #2A1529;
+  --color-plum-800: #3B1F3A;
+  --color-plum-600: #6B3F66;
+  --color-plum-200: #D9C4D6;
+  --color-plum-100: #F1E7F0;
+
+  --color-gold-700: #9C6E1F;
+  --color-gold-500: #D9A441;
+  --color-gold-100: #FCEFDA;
+
+  --color-terracotta-700: #A24B2E;
+  --color-terracotta-500: #C1543B;
+  --color-terracotta-100: #FBE7DE;
+
+  --color-rust-700: #8F3624;
+  --color-rust-100: #FBE1DB;
+
+  --color-amber-700: #96661F;
+  --color-amber-100: #FCEFDA;
+
+  --color-paper: #FAF6EC;
+  --color-ink: #22231D;
+  --color-ink-muted: #8C8A7C;
+  --color-line: #E2DFD4;
+
+  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, monospace;
+}
+
 @layer base {
   body {
-    @apply bg-gray-100 text-gray-900;
+    @apply bg-paper text-ink font-sans antialiased;
   }
+  ::selection {
+    @apply bg-gold-100 text-plum-900;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
 }
