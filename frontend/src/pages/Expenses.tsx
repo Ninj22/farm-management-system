@@ -21,6 +21,7 @@ export default function Expenses() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     createMutation.mutate({
+      farm_id: form.get("farm_id") as string,
       category: form.get("category") as ExpenseCreate["category"],
       amount: form.get("amount") as string,
       expense_date: form.get("expense_date") as string,
@@ -31,15 +32,15 @@ export default function Expenses() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold">Expenses</h1>
-        <button onClick={() => setShowForm(true)} className="bg-green-700 text-white text-sm px-4 py-2 rounded">
+        <h1 className="text-xl font-semibold text-ink">Expenses</h1>
+        <button onClick={() => setShowForm(true)} className="bg-plum-800 text-white text-sm px-4 py-2 rounded-lg hover:bg-plum-900">
           Add expense
         </button>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-line overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-gray-500 text-left">
+          <thead className="bg-paper text-ink-muted text-left">
             <tr>
               <th className="px-4 py-2">Date</th>
               <th className="px-4 py-2">Category</th>
@@ -48,13 +49,13 @@ export default function Expenses() {
             </tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={4} className="px-4 py-4 text-gray-400">Loading...</td></tr>}
+            {isLoading && <tr><td colSpan={4} className="px-4 py-4 text-ink-muted">Loading...</td></tr>}
             {expenses?.map((e) => (
-              <tr key={e.id} className="border-t border-gray-100">
-                <td className="px-4 py-2">{e.expense_date}</td>
-                <td className="px-4 py-2 text-gray-500">{e.category}</td>
-                <td className="px-4 py-2 text-gray-500">{e.description ?? "—"}</td>
-                <td className="px-4 py-2">KES {Number(e.amount).toLocaleString()}</td>
+              <tr key={e.id} className="border-t border-line">
+                <td className="px-4 py-2 font-mono text-xs">{e.expense_date}</td>
+                <td className="px-4 py-2 text-ink-muted">{e.category}</td>
+                <td className="px-4 py-2 text-ink-muted">{e.description ?? "—"}</td>
+                <td className="px-4 py-2 font-mono">KES {Number(e.amount).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>
@@ -62,10 +63,11 @@ export default function Expenses() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <form onSubmit={handleSubmit} className="bg-white rounded-lg p-6 w-full max-w-md space-y-3">
-            <h2 className="font-semibold mb-2">Add expense</h2>
-            <select name="category" required className="w-full border rounded px-3 py-2 text-sm">
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
+          <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
+            <h2 className="font-semibold text-ink mb-2">Add expense</h2>
+            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <select name="category" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
               <option value="">Category</option>
               <option value="FEED">Feed</option>
               <option value="VET_SERVICES">Vet services</option>
@@ -79,12 +81,12 @@ export default function Expenses() {
               <option value="REPAIRS">Repairs</option>
               <option value="OTHER">Other</option>
             </select>
-            <input name="amount" type="number" step="0.01" placeholder="Amount" required className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="expense_date" type="date" required className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="description" placeholder="Description" className="w-full border rounded px-3 py-2 text-sm" />
+            <input name="amount" type="number" step="0.01" placeholder="Amount" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="expense_date" type="date" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="description" placeholder="Description" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
-              <button type="submit" className="px-4 py-2 text-sm bg-green-700 text-white rounded">Save</button>
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-ink-muted">Cancel</button>
+              <button type="submit" className="px-4 py-2 text-sm bg-plum-800 text-white rounded-lg hover:bg-plum-900">Save</button>
             </div>
           </form>
         </div>

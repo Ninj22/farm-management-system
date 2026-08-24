@@ -36,6 +36,7 @@ export default function EquipmentPage() {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
     createMutation.mutate({
+      farm_id: form.get("farm_id") as string,
       name: form.get("name") as string,
       category: form.get("category") as string,
       serial_number: form.get("serial_number") as string,
@@ -61,8 +62,8 @@ export default function EquipmentPage() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h1 className="text-xl font-semibold">Assets & Equipment</h1>
-        <button onClick={() => setShowForm(true)} className="bg-green-700 text-white text-sm px-4 py-2 rounded">
+        <h1 className="text-xl font-semibold text-ink">Assets & Equipment</h1>
+        <button onClick={() => setShowForm(true)} className="bg-plum-800 text-white text-sm px-4 py-2 rounded-lg hover:bg-plum-900">
           Add equipment
         </button>
       </div>
@@ -71,12 +72,12 @@ export default function EquipmentPage() {
         placeholder="Search equipment..."
         value={search}
         onChange={(e) => setSearch(e.target.value)}
-        className="border border-gray-300 rounded px-3 py-2 text-sm mb-4 w-64"
+        className="border border-line rounded-lg px-3 py-2 text-sm mb-4 w-64 focus:border-plum-600 focus:outline-none focus:ring-2 focus:ring-plum-100"
       />
 
-      <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
+      <div className="bg-white rounded-xl border border-line overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 text-gray-500 text-left">
+          <thead className="bg-paper text-ink-muted text-left">
             <tr>
               <th className="px-4 py-2">Name</th>
               <th className="px-4 py-2">Category</th>
@@ -86,15 +87,15 @@ export default function EquipmentPage() {
             </tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={5} className="px-4 py-4 text-gray-400">Loading...</td></tr>}
+            {isLoading && <tr><td colSpan={5} className="px-4 py-4 text-ink-muted">Loading...</td></tr>}
             {equipment?.map((eq) => (
-              <tr key={eq.id} className="border-t border-gray-100">
-                <td className="px-4 py-2 font-medium">{eq.name}</td>
-                <td className="px-4 py-2 text-gray-500">{eq.category ?? "—"}</td>
-                <td className="px-4 py-2 text-gray-500">{eq.location ?? "—"}</td>
+              <tr key={eq.id} className="border-t border-line">
+                <td className="px-4 py-2 font-medium text-ink">{eq.name}</td>
+                <td className="px-4 py-2 text-ink-muted">{eq.category ?? "—"}</td>
+                <td className="px-4 py-2 text-ink-muted">{eq.location ?? "—"}</td>
                 <td className="px-4 py-2"><StatusBadge status={eq.status} /></td>
                 <td className="px-4 py-2">
-                  <button onClick={() => setMaintenanceFor(eq.id)} className="text-green-700 text-xs hover:underline">
+                  <button onClick={() => setMaintenanceFor(eq.id)} className="text-plum-800 text-xs hover:underline font-medium">
                     Log maintenance
                   </button>
                 </td>
@@ -105,32 +106,33 @@ export default function EquipmentPage() {
       </div>
 
       {showForm && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <form onSubmit={handleCreate} className="bg-white rounded-lg p-6 w-full max-w-md space-y-3">
-            <h2 className="font-semibold mb-2">Add equipment</h2>
-            <input name="name" placeholder="Name" required className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="category" placeholder="Category (e.g. Tractor)" className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="serial_number" placeholder="Serial number" className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="location" placeholder="Location" className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="condition" placeholder="Condition" className="w-full border rounded px-3 py-2 text-sm" />
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
+          <form onSubmit={handleCreate} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
+            <h2 className="font-semibold text-ink mb-2">Add equipment</h2>
+            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="name" placeholder="Name" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="category" placeholder="Category (e.g. Tractor)" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="serial_number" placeholder="Serial number" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="location" placeholder="Location" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="condition" placeholder="Condition" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
-              <button type="submit" className="px-4 py-2 text-sm bg-green-700 text-white rounded">Save</button>
+              <button type="button" onClick={() => setShowForm(false)} className="px-4 py-2 text-sm text-ink-muted">Cancel</button>
+              <button type="submit" className="px-4 py-2 text-sm bg-plum-800 text-white rounded-lg hover:bg-plum-900">Save</button>
             </div>
           </form>
         </div>
       )}
 
       {maintenanceFor && (
-        <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-          <form onSubmit={handleMaintenance} className="bg-white rounded-lg p-6 w-full max-w-md space-y-3">
-            <h2 className="font-semibold mb-2">Log maintenance</h2>
-            <input name="maintenance_date" type="date" required className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="service_type" placeholder="Service type (Preventive, Repair...)" className="w-full border rounded px-3 py-2 text-sm" />
-            <input name="cost" type="number" step="0.01" placeholder="Cost" className="w-full border rounded px-3 py-2 text-sm" />
+        <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
+          <form onSubmit={handleMaintenance} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
+            <h2 className="font-semibold text-ink mb-2">Log maintenance</h2>
+            <input name="maintenance_date" type="date" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="service_type" placeholder="Service type (Preventive, Repair...)" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="cost" type="number" step="0.01" placeholder="Cost" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <div className="flex justify-end gap-2 pt-2">
-              <button type="button" onClick={() => setMaintenanceFor(null)} className="px-4 py-2 text-sm text-gray-600">Cancel</button>
-              <button type="submit" className="px-4 py-2 text-sm bg-green-700 text-white rounded">Save</button>
+              <button type="button" onClick={() => setMaintenanceFor(null)} className="px-4 py-2 text-sm text-ink-muted">Cancel</button>
+              <button type="submit" className="px-4 py-2 text-sm bg-plum-800 text-white rounded-lg hover:bg-plum-900">Save</button>
             </div>
           </form>
         </div>
