@@ -13,6 +13,7 @@ import Sales from "./pages/Sales";
 import Expenses from "./pages/Expenses";
 import EquipmentPage from "./pages/Equipment";
 import Reports from "./pages/Reports";
+import Users from "./pages/Users";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ export default function App() {
                 <Route path="/expenses" element={<Expenses />} />
                 <Route path="/equipment" element={<EquipmentPage />} />
                 <Route path="/reports" element={<Reports />} />
+                <Route path="/users" element={<Users />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

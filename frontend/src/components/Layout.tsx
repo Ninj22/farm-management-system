@@ -2,44 +2,62 @@ import { useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Box, PawPrint, Stethoscope, Truck, ShoppingCart,
-  Receipt, LogOut, Wrench, FileBarChart, Search, Bell, Menu, X,
+  Receipt, LogOut, Wrench, FileBarChart, Search, Bell, Menu, X, Users,
 } from "lucide-react";
-import { useAuth } from "../context/AuthContext";
+import { useAuth, } from "../context/AuthContext";
+import type { Role } from "../context/AuthContext";
 
-const NAV_GROUPS = [
+interface NavItem {
+  to: string;
+  label: string;
+  icon: typeof LayoutDashboard;
+  roles?: Role[]; // undefined = visible to everyone
+}
+
+const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   { label: "Overview", items: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }] },
   { label: "Operations", items: [
-    { to: "/livestock", label: "Livestock", icon: PawPrint },
-    { to: "/veterinary", label: "Veterinary", icon: Stethoscope },
+    { to: "/livestock", label: "Livestock", icon: PawPrint, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
+    { to: "/veterinary", label: "Veterinary", icon: Stethoscope, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
   ]},
   { label: "Inventory", items: [
-    { to: "/inventory", label: "Inventory", icon: Box },
-    { to: "/purchases", label: "Purchases", icon: Truck },
+    { to: "/inventory", label: "Inventory", icon: Box, roles: ["ADMIN", "FARM_MANAGER", "INVENTORY_STAFF"] },
+    { to: "/purchases", label: "Purchases", icon: Truck, roles: ["ADMIN", "FARM_MANAGER", "INVENTORY_STAFF"] },
   ]},
   { label: "Business", items: [
-    { to: "/sales", label: "Sales", icon: ShoppingCart },
-    { to: "/expenses", label: "Expenses", icon: Receipt },
+    { to: "/sales", label: "Sales", icon: ShoppingCart, roles: ["ADMIN", "FARM_MANAGER", "SALES_STAFF"] },
+    { to: "/expenses", label: "Expenses", icon: Receipt, roles: ["ADMIN", "FARM_MANAGER"] },
   ]},
   { label: "Assets & insights", items: [
-    { to: "/equipment", label: "Equipment", icon: Wrench },
-    { to: "/reports", label: "Reports", icon: FileBarChart },
+    { to: "/equipment", label: "Equipment", icon: Wrench, roles: ["ADMIN", "FARM_MANAGER"] },
+    { to: "/reports", label: "Reports", icon: FileBarChart, roles: ["ADMIN", "FARM_MANAGER"] },
+  ]},
+  { label: "Administration", items: [
+    { to: "/users", label: "Users", icon: Users, roles: ["ADMIN"] },
   ]},
 ];
 
-const MOBILE_TABS = [
+const MOBILE_TABS: NavItem[] = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { to: "/inventory", label: "Stock", icon: Box },
-  { to: "/livestock", label: "Animals", icon: PawPrint },
+  { to: "/inventory", label: "Stock", icon: Box, roles: ["ADMIN", "FARM_MANAGER", "INVENTORY_STAFF"] },
+  { to: "/livestock", label: "Animals", icon: PawPrint, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
 ];
 
-const MORE_ITEMS = [
-  { to: "/veterinary", label: "Veterinary", icon: Stethoscope },
-  { to: "/purchases", label: "Purchases", icon: Truck },
-  { to: "/sales", label: "Sales", icon: ShoppingCart },
-  { to: "/expenses", label: "Expenses", icon: Receipt },
-  { to: "/equipment", label: "Equipment", icon: Wrench },
-  { to: "/reports", label: "Reports", icon: FileBarChart },
+const ALL_MORE_ITEMS: NavItem[] = [
+  { to: "/veterinary", label: "Veterinary", icon: Stethoscope, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
+  { to: "/purchases", label: "Purchases", icon: Truck, roles: ["ADMIN", "FARM_MANAGER", "INVENTORY_STAFF"] },
+  { to: "/sales", label: "Sales", icon: ShoppingCart, roles: ["ADMIN", "FARM_MANAGER", "SALES_STAFF"] },
+  { to: "/expenses", label: "Expenses", icon: Receipt, roles: ["ADMIN", "FARM_MANAGER"] },
+  { to: "/equipment", label: "Equipment", icon: Wrench, roles: ["ADMIN", "FARM_MANAGER"] },
+  { to: "/reports", label: "Reports", icon: FileBarChart, roles: ["ADMIN", "FARM_MANAGER"] },
+  { to: "/users", label: "Users", icon: Users, roles: ["ADMIN"] },
 ];
+
+function visible(item: NavItem, role: Role | null): boolean {
+  if (!item.roles) return true;
+  if (!role) return false;
+  return item.roles.includes(role);
+}
 
 const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
   `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm transition-colors ${
@@ -47,12 +65,19 @@ const navLinkClasses = ({ isActive }: { isActive: boolean }) =>
   }`;
 
 export default function Layout() {
-  const { logout } = useAuth();
+  const { logout, role } = useAuth();
   const [moreOpen, setMoreOpen] = useState(false);
+
+  const visibleGroups = NAV_GROUPS.map((g) => ({
+    ...g,
+    items: g.items.filter((i) => visible(i, role)),
+  })).filter((g) => g.items.length > 0);
+
+  const visibleMobileTabs = MOBILE_TABS.filter((i) => visible(i, role));
+  const visibleMoreItems = ALL_MORE_ITEMS.filter((i) => visible(i, role));
 
   return (
     <div className="flex min-h-screen bg-paper">
-      {/* Desktop sidebar */}
       <aside className="hidden w-60 flex-col bg-plum-800 lg:flex">
         <div className="flex items-center gap-2.5 px-4 py-5">
           <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10">
@@ -65,7 +90,7 @@ export default function Layout() {
         </div>
 
         <nav className="flex-1 space-y-4 px-3 pb-4">
-          {NAV_GROUPS.map((group) => (
+          {visibleGroups.map((group) => (
             <div key={group.label}>
               <p className="mb-1.5 px-3 text-[10.5px] font-semibold uppercase tracking-wide text-plum-200/60">
                 {group.label}
@@ -92,7 +117,6 @@ export default function Layout() {
       </aside>
 
       <div className="flex flex-1 flex-col">
-        {/* Top bar */}
         <div className="flex items-center justify-between border-b border-line bg-white px-4 py-3 lg:px-6">
           <div className="hidden max-w-xs flex-1 items-center gap-2 rounded-lg border border-line px-3 py-1.5 text-sm text-ink-muted lg:flex">
             <Search size={15} />
@@ -100,11 +124,9 @@ export default function Layout() {
           </div>
           <span className="text-sm font-semibold text-plum-800 lg:hidden">FarmCore</span>
           <div className="flex items-center gap-4">
-            <div className="relative">
-              <Bell size={18} className="text-ink-muted" />
-            </div>
+            <Bell size={18} className="text-ink-muted" />
             <span className="flex h-7 w-7 items-center justify-center rounded-full bg-gold-500 text-xs font-bold text-plum-900">
-              AA
+              {role ? role.slice(0, 2) : "?"}
             </span>
           </div>
         </div>
@@ -114,9 +136,8 @@ export default function Layout() {
         </main>
       </div>
 
-      {/* Mobile bottom nav */}
       <nav className="fixed inset-x-0 bottom-0 flex items-center justify-around border-t border-line bg-white py-2 lg:hidden">
-        {MOBILE_TABS.map(({ to, label, icon: Icon }) => (
+        {visibleMobileTabs.map(({ to, label, icon: Icon }) => (
           <NavLink
             key={to}
             to={to}
@@ -139,7 +160,6 @@ export default function Layout() {
         </button>
       </nav>
 
-      {/* Mobile "More" sheet */}
       {moreOpen && (
         <div className="fixed inset-0 z-20 flex items-end bg-black/40 lg:hidden">
           <div className="w-full rounded-t-2xl bg-white p-4 pb-8">
@@ -150,7 +170,7 @@ export default function Layout() {
               </button>
             </div>
             <div className="grid grid-cols-3 gap-3">
-              {MORE_ITEMS.map(({ to, label, icon: Icon }) => (
+              {visibleMoreItems.map(({ to, label, icon: Icon }) => (
                 <NavLink
                   key={to}
                   to={to}
