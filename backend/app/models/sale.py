@@ -24,7 +24,7 @@ class Sale(Base):
     __tablename__ = "sales"
 
     id = Column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
-    customer_id = Column(UUID(as_uuid=True), ForeignKey("customers.id"), nullable=False)
+    customer_id = Column(UUID(as_uuid=True), ForeignKey("customers.id"), nullable=True)
     sale_date = Column(Date, nullable=False)
     payment_status = Column(Enum(PaymentStatus, name="sale_payment_status"), nullable=False, default=PaymentStatus.UNPAID)
     payment_method = Column(String, nullable=True)

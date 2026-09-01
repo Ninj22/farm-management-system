@@ -17,6 +17,8 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "purchases.view", "purchases.create",
         "livestock.view", "livestock.create", "livestock.update",
         "veterinary.view", "veterinary.create",
+        "fields.view", "fields.create", "fields.update",
+        "crops.view", "crops.create", "crops.update",
         "customers.view", "customers.create",
         "sales.view", "sales.create",
         "expenses.view", "expenses.create",
@@ -33,7 +35,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
     },
 
     UserRole.VETERINARY_STAFF: {
-        "livestock.view", "livestock.create", "livestock.update",
+        "livestock.view", "livestock.update",  # create removed — farm manager/admin registers animals, vet clears/updates health status
         "veterinary.view", "veterinary.create",
         "inventory.view",  # needs to see medicine stock, not manage it
         "reports.view",

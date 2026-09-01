@@ -17,7 +17,7 @@ class SaleItemCreate(BaseModel):
 
 
 class SaleCreate(BaseModel):
-    customer_id: uuid.UUID
+    customer_id: Optional[uuid.UUID] = None
     sale_date: date
     payment_status: PaymentStatus = PaymentStatus.UNPAID
     payment_method: Optional[str] = None
