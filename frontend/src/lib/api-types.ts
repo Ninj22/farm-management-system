@@ -678,6 +678,95 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/crops/fields": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Fields */
+        get: operations["list_fields_api_v1_crops_fields_get"];
+        put?: never;
+        /** Create Field */
+        post: operations["create_field_api_v1_crops_fields_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/crops": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Crops */
+        get: operations["list_crops_api_v1_crops_get"];
+        put?: never;
+        /** Create Crop */
+        post: operations["create_crop_api_v1_crops_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/crops/{crop_id}/activities": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Activities */
+        get: operations["list_activities_api_v1_crops__crop_id__activities_get"];
+        put?: never;
+        /** Record Activity */
+        post: operations["record_activity_api_v1_crops__crop_id__activities_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/crops/{crop_id}/harvests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Harvests */
+        get: operations["list_harvests_api_v1_crops__crop_id__harvests_get"];
+        put?: never;
+        /** Record Harvest */
+        post: operations["record_harvest_api_v1_crops__crop_id__harvests_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/crops/{crop_id}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Complete Crop */
+        post: operations["complete_crop_api_v1_crops__crop_id__complete_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -748,6 +837,105 @@ export interface components {
              */
             client_secret?: string | null;
         };
+        /** CropActivityCreate */
+        CropActivityCreate: {
+            activity_type: components["schemas"]["CropActivityType"];
+            /**
+             * Activity Date
+             * Format: date
+             */
+            activity_date: string;
+            /** Input Item Id */
+            input_item_id?: string | null;
+            /** Quantity Used */
+            quantity_used?: number | string | null;
+            /** Cost */
+            cost?: number | string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** CropActivityOut */
+        CropActivityOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Crop Id
+             * Format: uuid
+             */
+            crop_id: string;
+            activity_type: components["schemas"]["CropActivityType"];
+            /**
+             * Activity Date
+             * Format: date
+             */
+            activity_date: string;
+            /** Quantity Used */
+            quantity_used: string | null;
+            /** Cost */
+            cost: string | null;
+            /** Notes */
+            notes: string | null;
+        };
+        /**
+         * CropActivityType
+         * @enum {string}
+         */
+        CropActivityType: "LAND_PREPARATION" | "PLANTING" | "FERTILIZATION" | "SPRAYING" | "IRRIGATION" | "WEEDING" | "OTHER";
+        /** CropCreate */
+        CropCreate: {
+            /**
+             * Field Id
+             * Format: uuid
+             */
+            field_id: string;
+            /** Crop Type */
+            crop_type: string;
+            /** Variety */
+            variety?: string | null;
+            /** Planting Date */
+            planting_date?: string | null;
+            /** Expected Harvest Date */
+            expected_harvest_date?: string | null;
+            /** Quantity Planted */
+            quantity_planted?: number | string | null;
+            /** Planting Unit */
+            planting_unit?: string | null;
+        };
+        /** CropOut */
+        CropOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Field Id
+             * Format: uuid
+             */
+            field_id: string;
+            /** Crop Type */
+            crop_type: string;
+            /** Variety */
+            variety: string | null;
+            /** Planting Date */
+            planting_date: string | null;
+            /** Expected Harvest Date */
+            expected_harvest_date: string | null;
+            status: components["schemas"]["CropStatus"];
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
+        /**
+         * CropStatus
+         * @enum {string}
+         */
+        CropStatus: "PLANNED" | "PLANTED" | "GROWING" | "HARVESTING" | "COMPLETED" | "FAILED";
         /** CustomerCreate */
         CustomerCreate: {
             /** Name */
@@ -956,10 +1144,96 @@ export interface components {
          * @enum {string}
          */
         FarmStatus: "ACTIVE" | "INACTIVE";
+        /** FieldCreate */
+        FieldCreate: {
+            /**
+             * Farm Id
+             * Format: uuid
+             */
+            farm_id: string;
+            /** Name */
+            name: string;
+            /** Size */
+            size?: number | string | null;
+            /** Size Unit */
+            size_unit?: string | null;
+            /** Location */
+            location?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** FieldOut */
+        FieldOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Farm Id
+             * Format: uuid
+             */
+            farm_id: string;
+            /** Name */
+            name: string;
+            /** Size */
+            size: string | null;
+            /** Size Unit */
+            size_unit: string | null;
+            /** Location */
+            location: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** HarvestCreate */
+        HarvestCreate: {
+            /**
+             * Harvest Date
+             * Format: date
+             */
+            harvest_date: string;
+            /** Quantity */
+            quantity: number | string;
+            /** Unit */
+            unit: string;
+            /** Produce Inventory Item Id */
+            produce_inventory_item_id?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** HarvestOut */
+        HarvestOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Crop Id
+             * Format: uuid
+             */
+            crop_id: string;
+            /**
+             * Harvest Date
+             * Format: date
+             */
+            harvest_date: string;
+            /** Quantity */
+            quantity: string;
+            /** Unit */
+            unit: string;
+            /** Produce Inventory Item Id */
+            produce_inventory_item_id: string | null;
+            /** Notes */
+            notes: string | null;
         };
         /**
          * InventoryCategory
@@ -1243,11 +1517,8 @@ export interface components {
         };
         /** SaleCreate */
         SaleCreate: {
-            /**
-             * Customer Id
-             * Format: uuid
-             */
-            customer_id: string;
+            /** Customer Id */
+            customer_id?: string | null;
             /**
              * Sale Date
              * Format: date
@@ -1341,7 +1612,7 @@ export interface components {
          * StockTransactionType
          * @enum {string}
          */
-        StockTransactionType: "OPENING_BALANCE" | "PURCHASE" | "CONSUMPTION" | "SALE" | "TRANSFER" | "ADJUSTMENT" | "DAMAGE" | "EXPIRY" | "RETURN";
+        StockTransactionType: "OPENING_BALANCE" | "PURCHASE" | "CONSUMPTION" | "SALE" | "TRANSFER" | "ADJUSTMENT" | "DAMAGE" | "EXPIRY" | "RETURN" | "PRODUCTION";
         /** StoreCreate */
         StoreCreate: {
             /**
@@ -3000,6 +3271,298 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AuditLogOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_fields_api_v1_crops_fields_get: {
+        parameters: {
+            query?: {
+                farm_id?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_field_api_v1_crops_fields_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FieldCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FieldOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_crops_api_v1_crops_get: {
+        parameters: {
+            query?: {
+                field_id?: string | null;
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_crop_api_v1_crops_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CropCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_activities_api_v1_crops__crop_id__activities_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                crop_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropActivityOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_activity_api_v1_crops__crop_id__activities_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                crop_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CropActivityCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropActivityOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_harvests_api_v1_crops__crop_id__harvests_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                crop_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HarvestOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_harvest_api_v1_crops__crop_id__harvests_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                crop_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["HarvestCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HarvestOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    complete_crop_api_v1_crops__crop_id__complete_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                crop_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CropOut"];
                 };
             };
             /** @description Validation Error */
