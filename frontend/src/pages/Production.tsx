@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchProduction, recordProduction } from "../lib/production";
 import type { ProductionCreate } from "../lib/production";
+import { useDefaultFarm } from "../lib/useDefaultFarm";
 import { fetchLivestock } from "../lib/livestock";
 import { fetchInventory } from "../lib/inventory";
 
 export default function Production() {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+  const { farms, singleFarm, hasMultipleFarms } = useDefaultFarm();
 
   const { data: records, isLoading } = useQuery({ queryKey: ["production"], queryFn: () => fetchProduction() });
   const { data: livestock } = useQuery({ queryKey: ["livestock", ""], queryFn: () => fetchLivestock("") });
@@ -25,10 +27,12 @@ export default function Production() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const farmId = hasMultipleFarms ? (form.get("farm_id") as string) : singleFarm?.id;
+    if (!farmId) return;
     const livestockId = form.get("livestock_id") as string;
     const produceItemId = form.get("produce_inventory_item_id") as string;
     createMutation.mutate({
-      farm_id: form.get("farm_id") as string,
+      farm_id: farmId,
       livestock_id: livestockId || undefined,
       product_type: form.get("product_type") as string,
       quantity: form.get("quantity") as string,
@@ -77,7 +81,12 @@ export default function Production() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
           <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
             <h2 className="font-semibold text-ink mb-2">Log production</h2>
-            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            {hasMultipleFarms && (
+              <select name="farm_id" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
+                <option value="">Select farm</option>
+                {farms?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            )}
             <select name="livestock_id" className="w-full border border-line rounded-lg px-3 py-2 text-sm">
               <option value="">Whole unit (e.g. dairy herd, layer house)</option>
               {livestock?.map((a) => <option key={a.id} value={a.id}>{a.tag_number} — {a.species}</option>)}

@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchFields, createField } from "../lib/crops";
 import type { FieldCreate } from "../lib/crops";
+import { useDefaultFarm } from "../lib/useDefaultFarm";
 
 export default function Fields() {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+  const { farms, singleFarm, hasMultipleFarms } = useDefaultFarm();
 
   const { data: fields, isLoading } = useQuery({ queryKey: ["fields"], queryFn: fetchFields });
 
@@ -20,8 +22,10 @@ export default function Fields() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const farmId = hasMultipleFarms ? (form.get("farm_id") as string) : singleFarm?.id;
+    if (!farmId) return;
     createMutation.mutate({
-      farm_id: form.get("farm_id") as string,
+      farm_id: farmId,
       name: form.get("name") as string,
       size: form.get("size") as string,
       size_unit: form.get("size_unit") as string,
@@ -64,7 +68,12 @@ export default function Fields() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
           <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
             <h2 className="font-semibold text-ink mb-2">Add field</h2>
-            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            {hasMultipleFarms && (
+              <select name="farm_id" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
+                <option value="">Select farm</option>
+                {farms?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            )}
             <input name="name" placeholder="Field name (e.g. Field A)" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <div className="flex gap-2">
               <input name="size" type="number" step="0.01" placeholder="Size" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />

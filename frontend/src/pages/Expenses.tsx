@@ -2,10 +2,12 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchExpenses, createExpense } from "../lib/expenses";
 import type { ExpenseCreate } from "../lib/expenses";
+import { useDefaultFarm } from "../lib/useDefaultFarm";
 
 export default function Expenses() {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+  const { farms, singleFarm, hasMultipleFarms } = useDefaultFarm();
 
   const { data: expenses, isLoading } = useQuery({ queryKey: ["expenses"], queryFn: fetchExpenses });
 
@@ -20,8 +22,10 @@ export default function Expenses() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const farmId = hasMultipleFarms ? (form.get("farm_id") as string) : singleFarm?.id;
+    if (!farmId) return;
     createMutation.mutate({
-      farm_id: form.get("farm_id") as string,
+      farm_id: farmId,
       category: form.get("category") as ExpenseCreate["category"],
       amount: form.get("amount") as string,
       expense_date: form.get("expense_date") as string,
@@ -66,7 +70,12 @@ export default function Expenses() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
           <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
             <h2 className="font-semibold text-ink mb-2">Add expense</h2>
-            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            {hasMultipleFarms && (
+              <select name="farm_id" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
+                <option value="">Select farm</option>
+                {farms?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            )}
             <select name="category" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
               <option value="">Category</option>
               <option value="FEED">Feed</option>

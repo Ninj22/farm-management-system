@@ -14,6 +14,10 @@ import Expenses from "./pages/Expenses";
 import EquipmentPage from "./pages/Equipment";
 import Reports from "./pages/Reports";
 import Users from "./pages/Users";
+import Fields from "./pages/Fields";
+import Crops from "./pages/Crops";
+import CropDetail from "./pages/CropDetail";
+import Production from "./pages/Production";
 
 const queryClient = new QueryClient();
 
@@ -36,6 +40,10 @@ export default function App() {
                 <Route path="/equipment" element={<EquipmentPage />} />
                 <Route path="/reports" element={<Reports />} />
                 <Route path="/users" element={<Users />} />
+                <Route path="/fields" element={<Fields />} />
+                <Route path="/crops" element={<Crops />} />
+                <Route path="/crops/:cropId" element={<CropDetail />} />
+                <Route path="/production" element={<Production />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

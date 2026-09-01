@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchEquipment, createEquipment, recordMaintenance } from "../lib/equipment";
 import type { EquipmentCreate } from "../lib/equipment";
+import { useDefaultFarm } from "../lib/useDefaultFarm";
 import StatusBadge from "../components/StatusBadge";
 
 export default function EquipmentPage() {
@@ -9,6 +10,7 @@ export default function EquipmentPage() {
   const [showForm, setShowForm] = useState(false);
   const [maintenanceFor, setMaintenanceFor] = useState<string | null>(null);
   const queryClient = useQueryClient();
+  const { farms, singleFarm, hasMultipleFarms } = useDefaultFarm();
 
   const { data: equipment, isLoading } = useQuery({
     queryKey: ["equipment", search],
@@ -35,8 +37,10 @@ export default function EquipmentPage() {
   function handleCreate(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const farmId = hasMultipleFarms ? (form.get("farm_id") as string) : singleFarm?.id;
+    if (!farmId) return;
     createMutation.mutate({
-      farm_id: form.get("farm_id") as string,
+      farm_id: farmId,
       name: form.get("name") as string,
       category: form.get("category") as string,
       serial_number: form.get("serial_number") as string,
@@ -109,7 +113,12 @@ export default function EquipmentPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
           <form onSubmit={handleCreate} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
             <h2 className="font-semibold text-ink mb-2">Add equipment</h2>
-            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            {hasMultipleFarms && (
+              <select name="farm_id" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
+                <option value="">Select farm</option>
+                {farms?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            )}
             <input name="name" placeholder="Name" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <input name="category" placeholder="Category (e.g. Tractor)" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <input name="serial_number" placeholder="Serial number" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
