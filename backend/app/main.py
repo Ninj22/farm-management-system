@@ -3,7 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.config import settings
 from app.api.v1 import (
-    auth, farms, stores, inventory, suppliers, purchases, livestock, veterinary, customers, sales, expenses, dashboard, equipment, reports, audit, crops,
+    auth, farms, stores, inventory, suppliers, purchases, livestock, veterinary, customers, sales, expenses, dashboard, equipment, reports, audit, crops, production, production,
 )
 
 app = FastAPI(title=settings.PROJECT_NAME)
@@ -35,6 +35,8 @@ app.include_router(equipment.router, prefix="/api/v1/equipment", tags=["equipmen
 app.include_router(reports.router, prefix="/api/v1/reports", tags=["reports"])
 app.include_router(audit.router, prefix="/api/v1/audit-logs", tags=["audit"])
 app.include_router(crops.router, prefix="/api/v1/crops", tags=["crops"])
+app.include_router(production.router, prefix="/api/v1/production", tags=["production"])
+app.include_router(production.router, prefix="/api/v1/production", tags=["production"])
 
 
 @app.get("/health")
