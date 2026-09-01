@@ -14,6 +14,7 @@ class Sex(str, enum.Enum):
 
 
 class LivestockStatus(str, enum.Enum):
+    PENDING_VERIFICATION = "PENDING_VERIFICATION"
     ACTIVE = "ACTIVE"
     SOLD = "SOLD"
     DECEASED = "DECEASED"
@@ -32,7 +33,7 @@ class Livestock(Base):
     date_of_birth = Column(Date, nullable=True)
     acquisition_date = Column(Date, nullable=True)
     source = Column(String, nullable=True)
-    status = Column(Enum(LivestockStatus), nullable=False, default=LivestockStatus.ACTIVE)
+    status = Column(Enum(LivestockStatus), nullable=False, default=LivestockStatus.PENDING_VERIFICATION)
     location = Column(String, nullable=True)
     dam_id = Column(UUID(as_uuid=True), ForeignKey("livestock.id"), nullable=True)
     sire_id = Column(UUID(as_uuid=True), ForeignKey("livestock.id"), nullable=True)

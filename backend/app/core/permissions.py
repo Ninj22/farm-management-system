@@ -15,7 +15,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "inventory.view", "inventory.create", "inventory.update", "inventory.adjust",
         "suppliers.view", "suppliers.create", "suppliers.update",
         "purchases.view", "purchases.create",
-        "livestock.view", "livestock.create", "livestock.update",
+        "livestock.view", "livestock.create", "livestock.update", "livestock.verify",
         "veterinary.view", "veterinary.create",
         "fields.view", "fields.create", "fields.update",
         "crops.view", "crops.create", "crops.update",

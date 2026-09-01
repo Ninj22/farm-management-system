@@ -333,6 +333,23 @@ export interface paths {
         patch: operations["update_livestock_api_v1_livestock__livestock_id__patch"];
         trace?: never;
     };
+    "/api/v1/livestock/{livestock_id}/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Verify Animal */
+        post: operations["verify_animal_api_v1_livestock__livestock_id__verify_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/veterinary": {
         parameters: {
             query?: never;
@@ -1438,7 +1455,7 @@ export interface components {
          * LivestockStatus
          * @enum {string}
          */
-        LivestockStatus: "ACTIVE" | "SOLD" | "DECEASED" | "TRANSFERRED";
+        LivestockStatus: "PENDING_VERIFICATION" | "ACTIVE" | "SOLD" | "DECEASED" | "TRANSFERRED";
         /** LivestockUpdate */
         LivestockUpdate: {
             /** Breed */
@@ -2695,6 +2712,37 @@ export interface operations {
                 "application/json": components["schemas"]["LivestockUpdate"];
             };
         };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["LivestockOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    verify_animal_api_v1_livestock__livestock_id__verify_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                livestock_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
         responses: {
             /** @description Successful Response */
             200: {

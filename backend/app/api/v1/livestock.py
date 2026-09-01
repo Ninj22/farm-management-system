@@ -25,3 +25,8 @@ def create_livestock(payload: LivestockCreate, db: Session = Depends(get_db), cu
 @router.patch("/{livestock_id}", response_model=LivestockOut, dependencies=[Depends(require_permission("livestock.update"))])
 def update_livestock(livestock_id: uuid.UUID, payload: LivestockUpdate, db: Session = Depends(get_db)):
     return livestock_service.update_livestock(db, livestock_id, payload)
+
+
+@router.post("/{livestock_id}/verify", response_model=LivestockOut, dependencies=[Depends(require_permission("livestock.verify"))])
+def verify_animal(livestock_id: uuid.UUID, db: Session = Depends(get_db)):
+    return livestock_service.verify_animal(db, livestock_id)

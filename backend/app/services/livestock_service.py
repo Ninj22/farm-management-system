@@ -32,3 +32,17 @@ def mark_sold(db: Session, livestock_id: uuid.UUID) -> Livestock:
         raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Animal is not active")
     animal.status = LivestockStatus.SOLD
     return livestock_repository.save(db, animal)
+
+
+def verify_animal(db: Session, livestock_id: uuid.UUID) -> Livestock:
+    """Confirms a newly-registered animal as part of the active herd. Anyone who
+    encounters an animal (a vet during a checkup, a worker on arrival) can register
+    it, but it stays PENDING_VERIFICATION until a Farm Manager/Admin confirms it —
+    matching how registration actually happens on a real farm."""
+    animal = livestock_repository.get_livestock(db, livestock_id)
+    if not animal:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Animal not found")
+    if animal.status != LivestockStatus.PENDING_VERIFICATION:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Animal is not pending verification")
+    animal.status = LivestockStatus.ACTIVE
+    return livestock_repository.save(db, animal)

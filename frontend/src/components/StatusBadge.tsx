@@ -4,8 +4,10 @@ const COLORS: Record<string, string> = {
   OPERATIONAL: "bg-gold-100 text-gold-700",
   PARTIAL: "bg-amber-100 text-amber-700",
   UNDER_MAINTENANCE: "bg-amber-100 text-amber-700",
+  PENDING_VERIFICATION: "bg-amber-100 text-amber-700",
   UNPAID: "bg-rust-100 text-rust-700",
   OUT_OF_SERVICE: "bg-rust-100 text-rust-700",
+  INACTIVE: "bg-rust-100 text-rust-700",
   SOLD: "bg-line text-ink-muted",
 };
 

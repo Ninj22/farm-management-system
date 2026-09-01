@@ -13,3 +13,8 @@ export async function createLivestock(payload: LivestockCreate) {
   const res = await api.post<Livestock>("/livestock", payload);
   return res.data;
 }
+
+export async function verifyAnimal(id: string) {
+  const res = await api.post<Livestock>(`/livestock/${id}/verify`);
+  return res.data;
+}

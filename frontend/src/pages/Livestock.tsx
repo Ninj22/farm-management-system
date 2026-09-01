@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { fetchLivestock, createLivestock } from "../lib/livestock";
+import { fetchLivestock, createLivestock, verifyAnimal } from "../lib/livestock";
 import type { LivestockCreate } from "../lib/livestock";
 import { useDefaultFarm } from "../lib/useDefaultFarm";
+import { useAuth } from "../context/AuthContext";
 import StatusBadge from "../components/StatusBadge";
 
 export default function LivestockPage() {
@@ -10,6 +11,8 @@ export default function LivestockPage() {
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
   const { farms, singleFarm, hasMultipleFarms } = useDefaultFarm();
+  const { role } = useAuth();
+  const canVerify = role === "ADMIN" || role === "FARM_MANAGER";
 
   const { data: animals, isLoading } = useQuery({
     queryKey: ["livestock", search],
@@ -22,6 +25,11 @@ export default function LivestockPage() {
       queryClient.invalidateQueries({ queryKey: ["livestock"] });
       setShowForm(false);
     },
+  });
+
+  const verifyMutation = useMutation({
+    mutationFn: verifyAnimal,
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["livestock"] }),
   });
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
@@ -48,6 +56,10 @@ export default function LivestockPage() {
         </button>
       </div>
 
+      <p className="text-xs text-ink-muted mb-3">
+        Newly registered animals start as <span className="font-mono">PENDING VERIFICATION</span> until a farm manager confirms them.
+      </p>
+
       <input
         placeholder="Search by tag number..."
         value={search}
@@ -64,10 +76,11 @@ export default function LivestockPage() {
               <th className="px-4 py-2">Breed</th>
               <th className="px-4 py-2">Sex</th>
               <th className="px-4 py-2">Status</th>
+              <th className="px-4 py-2"></th>
             </tr>
           </thead>
           <tbody>
-            {isLoading && <tr><td colSpan={5} className="px-4 py-4 text-ink-muted">Loading...</td></tr>}
+            {isLoading && <tr><td colSpan={6} className="px-4 py-4 text-ink-muted">Loading...</td></tr>}
             {animals?.map((a) => (
               <tr key={a.id} className="border-t border-line">
                 <td className="px-4 py-2 font-mono font-medium text-ink">{a.tag_number}</td>
@@ -75,6 +88,16 @@ export default function LivestockPage() {
                 <td className="px-4 py-2 text-ink-muted">{a.breed ?? "—"}</td>
                 <td className="px-4 py-2 text-ink-muted">{a.sex}</td>
                 <td className="px-4 py-2"><StatusBadge status={a.status} /></td>
+                <td className="px-4 py-2">
+                  {a.status === "PENDING_VERIFICATION" && canVerify && (
+                    <button
+                      onClick={() => verifyMutation.mutate(a.id)}
+                      className="text-plum-800 text-xs hover:underline font-medium"
+                    >
+                      Verify
+                    </button>
+                  )}
+                </td>
               </tr>
             ))}
           </tbody>

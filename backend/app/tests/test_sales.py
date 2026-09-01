@@ -6,6 +6,7 @@ def test_livestock_sale_updates_status(client, auth_headers, farm_and_store):
         "sex": "MALE",
     }, headers=auth_headers)
     livestock_id = livestock_resp.json()["id"]
+    client.post(f"/api/v1/livestock/{livestock_id}/verify", headers=auth_headers)
 
     customer_resp = client.post("/api/v1/customers", json={"name": "John Buyer"}, headers=auth_headers)
     customer_id = customer_resp.json()["id"]
