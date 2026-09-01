@@ -55,6 +55,7 @@ class StockTransactionType(str, enum.Enum):
     EXPIRY = "EXPIRY"
     RETURN = "RETURN"
     PRODUCTION = "PRODUCTION"
+    INTERNAL_USE = "INTERNAL_USE"
 
 
 class StockTransaction(Base):

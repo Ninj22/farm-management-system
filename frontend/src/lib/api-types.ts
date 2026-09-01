@@ -785,6 +785,29 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/internal-use/{item_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Record Internal Use
+         * @description Records inventory leaving the farm WITHOUT a sale — e.g. harvested napier grass
+         *     consumed as livestock feed, or produce that spoiled. Uses the same ledger
+         *     mechanism as every other stock change, but tagged with why it left and,
+         *     optionally, which animal/herd it went to.
+         */
+        post: operations["record_internal_use_api_v1_internal_use__item_id__post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1253,6 +1276,17 @@ export interface components {
             /** Notes */
             notes: string | null;
         };
+        /** InternalUseCreate */
+        InternalUseCreate: {
+            /** Quantity */
+            quantity: number | string;
+            /** Used For */
+            used_for: string;
+            /** Livestock Id */
+            livestock_id?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
         /**
          * InventoryCategory
          * @enum {string}
@@ -1690,7 +1724,7 @@ export interface components {
          * StockTransactionType
          * @enum {string}
          */
-        StockTransactionType: "OPENING_BALANCE" | "PURCHASE" | "CONSUMPTION" | "SALE" | "TRANSFER" | "ADJUSTMENT" | "DAMAGE" | "EXPIRY" | "RETURN" | "PRODUCTION";
+        StockTransactionType: "OPENING_BALANCE" | "PURCHASE" | "CONSUMPTION" | "SALE" | "TRANSFER" | "ADJUSTMENT" | "DAMAGE" | "EXPIRY" | "RETURN" | "PRODUCTION" | "INTERNAL_USE";
         /** StoreCreate */
         StoreCreate: {
             /**
@@ -3707,6 +3741,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ProductionOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_internal_use_api_v1_internal_use__item_id__post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["InternalUseCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["InventoryItemOut"];
                 };
             };
             /** @description Validation Error */
