@@ -23,6 +23,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "sales.view", "sales.create",
         "expenses.view", "expenses.create",
         "equipment.view", "equipment.create", "equipment.update", "equipment.maintain",
+        "production.view", "production.create",
         "reports.view", "reports.export",
     },
 
@@ -31,6 +32,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "suppliers.view", "suppliers.create",
         "purchases.view", "purchases.create",
         "equipment.view",
+        "production.view",
         "reports.view", "reports.export",
     },
 
@@ -38,6 +40,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "livestock.view", "livestock.update",  # create removed — farm manager/admin registers animals, vet clears/updates health status
         "veterinary.view", "veterinary.create",
         "inventory.view",  # needs to see medicine stock, not manage it
+        "production.view",
         "reports.view",
     },
 
@@ -52,6 +55,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
     UserRole.GENERAL_STAFF: {
         "inventory.view",
         "livestock.view",
+        "production.view", "production.create",  # logging milk/eggs collected is their core daily job
     },
 }
 

@@ -767,6 +767,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/production": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Production */
+        get: operations["list_production_api_v1_production_get"];
+        put?: never;
+        /** Record Production */
+        post: operations["record_production_api_v1_production_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1442,6 +1460,66 @@ export interface components {
          * @enum {string}
          */
         PaymentStatus: "PAID" | "PARTIAL" | "UNPAID";
+        /** ProductionCreate */
+        ProductionCreate: {
+            /**
+             * Farm Id
+             * Format: uuid
+             */
+            farm_id: string;
+            /** Livestock Id */
+            livestock_id?: string | null;
+            /** Product Type */
+            product_type: string;
+            /** Quantity */
+            quantity: number | string;
+            /** Unit */
+            unit: string;
+            /**
+             * Production Date
+             * Format: date
+             */
+            production_date: string;
+            /** Produce Inventory Item Id */
+            produce_inventory_item_id?: string | null;
+            /** Notes */
+            notes?: string | null;
+        };
+        /** ProductionOut */
+        ProductionOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Farm Id
+             * Format: uuid
+             */
+            farm_id: string;
+            /** Livestock Id */
+            livestock_id: string | null;
+            /** Product Type */
+            product_type: string;
+            /** Quantity */
+            quantity: string;
+            /** Unit */
+            unit: string;
+            /**
+             * Production Date
+             * Format: date
+             */
+            production_date: string;
+            /** Produce Inventory Item Id */
+            produce_inventory_item_id: string | null;
+            /** Notes */
+            notes: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+        };
         /** PurchaseCreate */
         PurchaseCreate: {
             /**
@@ -3563,6 +3641,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["CropOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_production_api_v1_production_get: {
+        parameters: {
+            query?: {
+                farm_id?: string | null;
+                livestock_id?: string | null;
+                product_type?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductionOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    record_production_api_v1_production_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ProductionCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ProductionOut"];
                 };
             };
             /** @description Validation Error */

@@ -11,6 +11,7 @@ export default function Crops() {
 
   const { data: crops, isLoading } = useQuery({ queryKey: ["crops"], queryFn: () => fetchCrops() });
   const { data: fields } = useQuery({ queryKey: ["fields"], queryFn: fetchFields });
+  const cropTypeSuggestions = Array.from(new Set((crops ?? []).map((c) => c.crop_type))).sort();
 
   const createMutation = useMutation({
     mutationFn: createCrop,
@@ -81,7 +82,10 @@ export default function Crops() {
               <option value="">Select field</option>
               {fields?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
             </select>
-            <input name="crop_type" placeholder="Crop type (e.g. Maize, Sukuma Wiki)" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <input name="crop_type" list="crop-types" placeholder="Crop type (e.g. Maize, Sukuma Wiki)" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            <datalist id="crop-types">
+              {cropTypeSuggestions.map((t) => <option key={t} value={t} />)}
+            </datalist>
             <input name="variety" placeholder="Variety (optional)" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <label className="text-xs text-ink-muted">Planting date</label>
             <input name="planting_date" type="date" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />

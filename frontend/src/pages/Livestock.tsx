@@ -2,12 +2,14 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { fetchLivestock, createLivestock } from "../lib/livestock";
 import type { LivestockCreate } from "../lib/livestock";
+import { useDefaultFarm } from "../lib/useDefaultFarm";
 import StatusBadge from "../components/StatusBadge";
 
 export default function LivestockPage() {
   const [search, setSearch] = useState("");
   const [showForm, setShowForm] = useState(false);
   const queryClient = useQueryClient();
+  const { farms, singleFarm, hasMultipleFarms } = useDefaultFarm();
 
   const { data: animals, isLoading } = useQuery({
     queryKey: ["livestock", search],
@@ -25,8 +27,10 @@ export default function LivestockPage() {
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     const form = new FormData(e.currentTarget);
+    const farmId = hasMultipleFarms ? (form.get("farm_id") as string) : singleFarm?.id;
+    if (!farmId) return;
     createMutation.mutate({
-      farm_id: form.get("farm_id") as string,
+      farm_id: farmId,
       tag_number: form.get("tag_number") as string,
       species: (form.get("species") as string) || "Cattle",
       breed: form.get("breed") as string,
@@ -81,7 +85,12 @@ export default function LivestockPage() {
         <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-10">
           <form onSubmit={handleSubmit} className="bg-white rounded-xl p-6 w-full max-w-md space-y-3">
             <h2 className="font-semibold text-ink mb-2">Register animal</h2>
-            <input name="farm_id" placeholder="Farm ID" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
+            {hasMultipleFarms && (
+              <select name="farm_id" required className="w-full border border-line rounded-lg px-3 py-2 text-sm">
+                <option value="">Select farm</option>
+                {farms?.map((f) => <option key={f.id} value={f.id}>{f.name}</option>)}
+              </select>
+            )}
             <input name="tag_number" placeholder="Tag number" required className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <input name="species" placeholder="Species (default: Cattle)" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
             <input name="breed" placeholder="Breed" className="w-full border border-line rounded-lg px-3 py-2 text-sm" />
