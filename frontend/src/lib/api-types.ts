@@ -13,7 +13,12 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        /** Register */
+        /**
+         * Register
+         * @description Open ONLY when the database has zero users (first-time setup bootstrap).
+         *     Once any user exists, creating new accounts requires a logged-in ADMIN —
+         *     prevents anyone with the URL from self-registering as ADMIN.
+         */
         post: operations["register_api_v1_auth_register_post"];
         delete?: never;
         options?: never;
@@ -2118,7 +2123,9 @@ export interface operations {
     register_api_v1_auth_register_post: {
         parameters: {
             query?: never;
-            header?: never;
+            header?: {
+                authorization?: string | null;
+            };
             path?: never;
             cookie?: never;
         };

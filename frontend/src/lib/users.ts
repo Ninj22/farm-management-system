@@ -17,3 +17,10 @@ export async function activateUser(id: string) {
   const res = await api.patch<User>(`/auth/users/${id}/activate`);
   return res.data;
 }
+
+export type UserCreate = components["schemas"]["UserCreate"];
+
+export async function registerUser(payload: UserCreate) {
+  const res = await api.post<User>("/auth/register", payload);
+  return res.data;
+}
