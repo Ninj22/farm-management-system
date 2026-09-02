@@ -14,3 +14,7 @@ def create_user(db: Session, user: User) -> User:
     return user
 
 
+
+
+def count_users(db: Session) -> int:
+    return db.query(User).count()

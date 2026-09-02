@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Header
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 
@@ -12,7 +12,20 @@ router = APIRouter()
 
 
 @router.post("/register", response_model=UserOut)
-def register(payload: UserCreate, db: Session = Depends(get_db)):
+def register(payload: UserCreate, db: Session = Depends(get_db), authorization: str | None = Header(default=None)):
+    """Open ONLY when the database has zero users (first-time setup bootstrap).
+    Once any user exists, creating new accounts requires a logged-in ADMIN —
+    prevents anyone with the URL from self-registering as ADMIN."""
+    from app.repositories import user_repository
+    if user_repository.count_users(db) > 0:
+        from app.core.deps import get_current_user
+        from app.models.user import UserRole
+        if not authorization:
+            raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Registration requires an authenticated ADMIN")
+        token = authorization.replace("Bearer ", "")
+        current_user = get_current_user(token=token, db=db)
+        if current_user.role != UserRole.ADMIN:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Only an ADMIN can register new users")
     return auth_service.register_user(db, payload)
 
 
