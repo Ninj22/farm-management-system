@@ -18,6 +18,7 @@ import Fields from "./pages/Fields";
 import Crops from "./pages/Crops";
 import CropDetail from "./pages/CropDetail";
 import Production from "./pages/Production";
+import Tasks from "./pages/Tasks";
 
 const queryClient = new QueryClient();
 
@@ -44,6 +45,7 @@ export default function App() {
                 <Route path="/crops" element={<Crops />} />
                 <Route path="/crops/:cropId" element={<CropDetail />} />
                 <Route path="/production" element={<Production />} />
+                <Route path="/tasks" element={<Tasks />} />
               </Route>
             </Route>
             <Route path="*" element={<Navigate to="/dashboard" replace />} />

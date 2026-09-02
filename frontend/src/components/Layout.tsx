@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Outlet, NavLink } from "react-router-dom";
 import {
   LayoutDashboard, Box, PawPrint, Stethoscope, Truck, ShoppingCart,
-  Receipt, LogOut, Wrench, FileBarChart, Search, Bell, Menu, X, Users, Sprout,
+  Receipt, LogOut, Wrench, FileBarChart, Search, Bell, Menu, X, Users, Sprout, ClipboardList,
 } from "lucide-react";
 import { useAuth } from "../context/AuthContext";
 import type { Role } from "../context/AuthContext";
@@ -17,6 +17,7 @@ interface NavItem {
 const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
   { label: "Overview", items: [{ to: "/dashboard", label: "Dashboard", icon: LayoutDashboard }] },
   { label: "Operations", items: [
+    { to: "/tasks", label: "Tasks", icon: ClipboardList },
     { to: "/livestock", label: "Livestock", icon: PawPrint, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
     { to: "/veterinary", label: "Veterinary", icon: Stethoscope, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
     { to: "/fields", label: "Fields", icon: Sprout, roles: ["ADMIN", "FARM_MANAGER"] },
@@ -42,8 +43,8 @@ const NAV_GROUPS: { label: string; items: NavItem[] }[] = [
 
 const MOBILE_TABS: NavItem[] = [
   { to: "/dashboard", label: "Home", icon: LayoutDashboard },
+  { to: "/tasks", label: "Tasks", icon: ClipboardList },
   { to: "/inventory", label: "Stock", icon: Box, roles: ["ADMIN", "FARM_MANAGER", "INVENTORY_STAFF"] },
-  { to: "/livestock", label: "Animals", icon: PawPrint, roles: ["ADMIN", "FARM_MANAGER", "VETERINARY_STAFF"] },
 ];
 
 const ALL_MORE_ITEMS: NavItem[] = [

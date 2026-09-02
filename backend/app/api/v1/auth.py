@@ -27,7 +27,7 @@ def me(current_user: User = Depends(get_current_user)):
     return current_user
 
 
-@router.get("/users", response_model=list[UserOut], dependencies=[Depends(require_roles([UserRole.ADMIN]))])
+@router.get("/users", response_model=list[UserOut], dependencies=[Depends(require_roles([UserRole.ADMIN, UserRole.FARM_MANAGER]))])
 def list_users(db: Session = Depends(get_db)):
     return db.query(User).all()
 

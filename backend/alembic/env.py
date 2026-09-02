@@ -7,7 +7,7 @@ from app.core.config import settings
 from app.db.base import Base
 from app.models import (
     user, supplier, farm, store, inventory, audit_log,
-    purchase, livestock, treatment, customer, sale, expense, equipment, user_farm_access, crop, production,
+    purchase, livestock, treatment, customer, sale, expense, equipment, user_farm_access, crop, production, task,
 )  # noqa: F401
 
 config = context.config

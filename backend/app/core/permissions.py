@@ -24,6 +24,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "expenses.view", "expenses.create",
         "equipment.view", "equipment.create", "equipment.update", "equipment.maintain",
         "production.view", "production.create",
+        "tasks.view", "tasks.create", "tasks.update",
         "reports.view", "reports.export",
     },
 
@@ -33,6 +34,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "purchases.view", "purchases.create",
         "equipment.view",
         "production.view",
+        "tasks.view", "tasks.update",
         "reports.view", "reports.export",
     },
 
@@ -41,6 +43,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "veterinary.view", "veterinary.create",
         "inventory.view",  # needs to see medicine stock, not manage it
         "production.view",
+        "tasks.view", "tasks.update",
         "reports.view",
     },
 
@@ -49,6 +52,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "customers.view", "customers.create",
         "livestock.view",   # needed to sell an animal
         "inventory.view",   # needed to sell a product
+        "tasks.view", "tasks.update",
         "reports.view",
     },
 
@@ -56,6 +60,7 @@ ROLE_PERMISSIONS: dict[UserRole, set[str]] = {
         "inventory.view",
         "livestock.view",
         "production.view", "production.create",  # logging milk/eggs collected is their core daily job
+        "tasks.view", "tasks.update",  # see and complete their own assigned tasks — this is their primary interface
     },
 }
 

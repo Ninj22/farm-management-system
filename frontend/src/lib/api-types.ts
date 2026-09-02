@@ -825,6 +825,62 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/tasks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Tasks */
+        get: operations["list_tasks_api_v1_tasks_get"];
+        put?: never;
+        /** Create Task */
+        post: operations["create_task_api_v1_tasks_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks/mine": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * List My Tasks
+         * @description Convenience endpoint — the tasks assigned to whoever's currently logged in.
+         *     This is what the worker-facing checklist view uses.
+         */
+        get: operations["list_my_tasks_api_v1_tasks_mine_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/tasks/{task_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** Update Status */
+        patch: operations["update_status_api_v1_tasks__task_id__status_patch"];
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -1818,6 +1874,108 @@ export interface components {
             contact_email?: string | null;
             /** Address */
             address?: string | null;
+        };
+        /**
+         * TaskCategory
+         * @enum {string}
+         */
+        TaskCategory: "FEEDING" | "WEEDING" | "HARVESTING" | "MAINTENANCE" | "VETERINARY" | "CLEANING" | "OTHER";
+        /** TaskCreate */
+        TaskCreate: {
+            /**
+             * Farm Id
+             * Format: uuid
+             */
+            farm_id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description?: string | null;
+            /** @default OTHER */
+            category: components["schemas"]["TaskCategory"];
+            /** @default MEDIUM */
+            priority: components["schemas"]["TaskPriority"];
+            /** Due Date */
+            due_date?: string | null;
+            /** Field Id */
+            field_id?: string | null;
+            /** Crop Id */
+            crop_id?: string | null;
+            /** Livestock Id */
+            livestock_id?: string | null;
+            /** Equipment Id */
+            equipment_id?: string | null;
+            /**
+             * Assignee Ids
+             * @default []
+             */
+            assignee_ids: string[];
+        };
+        /** TaskOut */
+        TaskOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Farm Id
+             * Format: uuid
+             */
+            farm_id: string;
+            /** Title */
+            title: string;
+            /** Description */
+            description: string | null;
+            category: components["schemas"]["TaskCategory"];
+            priority: components["schemas"]["TaskPriority"];
+            status: components["schemas"]["TaskStatus"];
+            /** Due Date */
+            due_date: string | null;
+            /** Field Id */
+            field_id: string | null;
+            /** Crop Id */
+            crop_id: string | null;
+            /** Livestock Id */
+            livestock_id: string | null;
+            /** Equipment Id */
+            equipment_id: string | null;
+            /** Created By */
+            created_by: string | null;
+            /** Completed By */
+            completed_by: string | null;
+            /** Completion Notes */
+            completion_notes: string | null;
+            /** Started At */
+            started_at: string | null;
+            /** Completed At */
+            completed_at: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /**
+             * Assignee Ids
+             * @default []
+             */
+            assignee_ids: string[];
+        };
+        /**
+         * TaskPriority
+         * @enum {string}
+         */
+        TaskPriority: "LOW" | "MEDIUM" | "HIGH";
+        /**
+         * TaskStatus
+         * @enum {string}
+         */
+        TaskStatus: "PENDING" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
+        /** TaskStatusUpdate */
+        TaskStatusUpdate: {
+            status: components["schemas"]["TaskStatus"];
+            /** Completion Notes */
+            completion_notes?: string | null;
         };
         /** Token */
         Token: {
@@ -3824,6 +3982,138 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["InventoryItemOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_tasks_api_v1_tasks_get: {
+        parameters: {
+            query?: {
+                farm_id?: string | null;
+                assigned_to?: string | null;
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_task_api_v1_tasks_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_my_tasks_api_v1_tasks_mine_get: {
+        parameters: {
+            query?: {
+                status?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    update_status_api_v1_tasks__task_id__status_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                task_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TaskStatusUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TaskOut"];
                 };
             };
             /** @description Validation Error */
